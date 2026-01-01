@@ -1,68 +1,67 @@
-const jsonfile = require('jsonfile');
-const moment = require('moment');
-const simpleGit = require('simple-git');
+const jsonfile = require("jsonfile");
+const moment = require("moment");
+const simpleGit = require("simple-git");
+
 const FILE_PATH = "./data.json";
-
-
 const git = simpleGit();
 
+const START_DATE = "2026-01-01";
+const END_DATE = "2026-03-18";
+const COMMITS_PER_DAY = 20;
 
-const getRandomDaysIn2025JanToMay = (numCommits) => {
-    const days = [];
-    let date = moment('2025-01-01');
-    while (date.isSameOrBefore('2025-05-31')) {
-        days.push(date.format('YYYY-MM-DDTHH:mm:ssZ'));
-        date.add(1, 'days');
-    }
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-    const randomDays = [];
-    while (randomDays.length < numCommits) {
-        const randomIndex = Math.floor(Math.random() * days.length);
-        const selectedDay = days[randomIndex];
-        if (!randomDays.includes(selectedDay)) {
-            randomDays.push(selectedDay);
-        }
-    }
+async function makeCommits() {
+  let date = moment(START_DATE);
 
-    return randomDays;
-};
+  while (date.isSameOrBefore(END_DATE)) {
+    console.log(`\nProcessing ${date.format("YYYY-MM-DD")}`);
 
+    for (let i = 0; i < COMMITS_PER_DAY; i++) {
+      const commitDate = date
+        .clone()
+        .hour(12)
+        .minute(i)
+        .second(Math.floor(Math.random() * 60));
 
-const makeCommit = (n, days, commitsMade) => {
-    if (commitsMade >= n) {
-        git.push((err) => {
-            if (err) {
-                console.error("Error pushing changes:", err);
-            } else {
-                console.log("All commits done and pushed.");
-            }
-        });
+      const formattedDate = commitDate.format("YYYY-MM-DDTHH:mm:ss");
+
+      const data = {
+        date: formattedDate,
+        commit: i + 1,
+      };
+
+      try {
+        await jsonfile.writeFile(FILE_PATH, data, { spaces: 2 });
+
+        await git.add([FILE_PATH]);
+
+        await git.commit(
+          `Commit ${i + 1} on ${date.format("YYYY-MM-DD")}`,
+          undefined,
+          {
+            "--date": formattedDate,
+          },
+        );
+
+        console.log(`Commit ${i + 1} done`);
+      } catch (err) {
+        console.error("Commit failed:", err);
         return;
+      }
+
+      await sleep(50);
     }
 
-    const randomDay = days[Math.floor(Math.random() * days.length)];
+    date.add(1, "days");
+  }
 
-    const data = {
-        date: randomDay,
-        commit: commitsMade + 1
-    };
+  try {
+    await git.push();
+    console.log("\n✅ All commits completed and pushed.");
+  } catch (err) {
+    console.error("Push failed:", err);
+  }
+}
 
-    console.log(`Committing #${commitsMade + 1} on ${randomDay}`);
-
-    jsonfile.writeFile(FILE_PATH, data, { spaces: 2 }, (err) => {
-        if (err) {
-            console.error("Error writing to file:", err);
-            return;
-        }
-
-        git.add([FILE_PATH])
-            .commit(`Commit ${commitsMade + 1} on ${randomDay}`, { '--date': randomDay }, () => {
-                const updatedDays = days.filter(day => day !== randomDay);
-                makeCommit(n, updatedDays, commitsMade + 1);
-            });
-    });
-};
-
-
-const randomDays = getRandomDaysIn2025JanToMay(100);
-makeCommit(100, randomDays, 0);
+makeCommits();

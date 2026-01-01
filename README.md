@@ -25,8 +25,8 @@ This bot automates git commits on random days between January and May 2025 to he
 
 ```bash
 # Clone the repo
-git clone https://github.com/mohamedhamdhy/Guthub-bot.git
-cd Guthub-bot
+git clone https://github.com/mohamedhamdhy/micro-js-graph
+cd micro-js-graph
 
 # Install dependencies
 npm install
