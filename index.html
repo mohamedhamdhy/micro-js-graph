@@ -2,65 +2,600 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Git Contribution Bypass</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GITSYS_v1.0.0</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <canvas id="bgCanvas"></canvas>
+    <div class="scanlines"></div>
+    <div class="grid-bg"></div>
 
-    <div id="dashboard">
-      <div id="header">
-        <h1>Git Contribution Bypass</h1>
-        <span id="developer">Developed by Mohamed Al Hamdhy</span>
-      </div>
+    <div class="boot-screen" id="bootScreen">
+      <div class="boot-text" id="bootText"></div>
+    </div>
 
-      <div class="controls">
-        <input
-          type="text"
-          id="startDate"
-          placeholder="Start Date YYYY-MM-DD"
-          value="2026-01-01"
-        />
-        <input
-          type="text"
-          id="endDate"
-          placeholder="End Date YYYY-MM-DD"
-          value="2026-01-05"
-        />
-
-        <div class="number-control">
-          <button id="decrease">-</button>
-          <input
-            type="number"
-            id="commitsPerDay"
-            value="20"
-            min="1"
-            max="100"
-          />
-          <button id="increase">+</button>
+    <div class="dashboard" id="dashboard" style="display: none">
+      <header class="topbar">
+        <div class="topbar-left">
+          <span class="sys-id">GITSYS_v1.0.0</span>
+          <span class="divider">|</span>
+          <span class="operator">OPERATOR: <strong>HAMDHY</strong></span>
         </div>
-
-        <input type="text" id="commitMessage" value="Commit message" />
-        <button id="startBtn">START</button>
-        <button id="stopBtn" disabled>STOP</button>
-      </div>
-
-      <div class="progress-container">
-        <label>Overall Progress</label>
-        <div class="progress-bar">
-          <div id="overallProgress" class="progress-fill">0%</div>
+        <div class="topbar-center">
+          <div class="radar-dot"></div>
+          <span class="status-text" id="sysStatus">ALL SYSTEMS NOMINAL</span>
         </div>
-
-        <label>Day Progress</label>
-        <div class="progress-bar">
-          <div id="dayProgress" class="progress-fill">0%</div>
+        <div class="topbar-right">
+          <span class="clock" id="clock"></span>
         </div>
-      </div>
+      </header>
 
-      <div id="log"></div>
+      <main class="main-grid">
+        <aside class="left-panel">
+          <div class="panel-block">
+            <div class="panel-label">// GIT TARGET REPO</div>
+            <div class="resume-card">
+              <div class="resume-icon-wrap">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                >
+                  <circle cx="12" cy="18" r="3" />
+                  <circle cx="6" cy="6" r="3" />
+                  <circle cx="18" cy="6" r="3" />
+                  <path d="M18 9v1a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V9" />
+                  <line x1="12" y1="12" x2="12" y2="15" />
+                </svg>
+              </div>
+              <div class="resume-details">
+                <div class="resume-filename">CURRENT WORKING DIRECTORY</div>
+                <div class="resume-badge">● CONNECTED</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-block">
+            <div class="panel-label">// DATE RANGE</div>
+            <div class="input-group">
+              <div class="input-row">
+                <label class="input-label">START DATE</label>
+                <input
+                  type="text"
+                  id="startDate"
+                  class="sys-input"
+                  value="2026-01-01"
+                  placeholder="YYYY-MM-DD"
+                />
+              </div>
+              <div class="input-row">
+                <label class="input-label">END DATE</label>
+                <input
+                  type="text"
+                  id="endDate"
+                  class="sys-input"
+                  value="2026-01-05"
+                  placeholder="YYYY-MM-DD"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-block">
+            <div class="panel-label">// COMMITS PER DAY</div>
+            <div class="number-control">
+              <button class="num-btn" id="decrease">−</button>
+              <input
+                type="number"
+                id="commitsPerDay"
+                class="num-input"
+                value="20"
+                min="1"
+                max="100"
+              />
+              <button class="num-btn" id="increase">+</button>
+            </div>
+          </div>
+
+          <div class="panel-block">
+            <div class="panel-label">// COMMIT MESSAGE TEMPLATE</div>
+            <input
+              type="text"
+              id="commitMessage"
+              class="sys-input"
+              value="Enter your message"
+            />
+            <div class="input-hint">
+              X = commit number &nbsp;·&nbsp; YYYY-MM-DD = date
+            </div>
+          </div>
+
+          <div class="action-btns">
+            <button class="fire-btn" id="startBtn">
+              <span class="fire-label">▶ EXECUTE COMMITS</span>
+              <div class="fire-scan"></div>
+            </button>
+            <button class="stop-btn" id="stopBtn" disabled>
+              <span>■ ABORT SEQUENCE</span>
+            </button>
+          </div>
+
+          <div class="panel-block">
+            <div class="panel-label">// MISSION STATS</div>
+            <div class="stats-row">
+              <div class="stat-item">
+                <div class="stat-num" id="statTotal">0</div>
+                <div class="stat-lbl">TOTAL</div>
+              </div>
+              <div class="stat-sep"></div>
+              <div class="stat-item">
+                <div class="stat-num green" id="statDone">0</div>
+                <div class="stat-lbl">DONE</div>
+              </div>
+              <div class="stat-sep"></div>
+              <div class="stat-item">
+                <div class="stat-num yellow" id="statDays">0</div>
+                <div class="stat-lbl">DAYS</div>
+              </div>
+            </div>
+
+            <div class="progress-section">
+              <div class="progress-meta">
+                <span class="progress-lbl-text">OVERALL PROGRESS</span>
+                <span class="progress-pct" id="overallPct">0%</span>
+              </div>
+              <div class="progress-bar-wrap">
+                <div
+                  class="progress-bar"
+                  id="overallProgress"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+
+            <div class="progress-section">
+              <div class="progress-meta">
+                <span class="progress-lbl-text">CURRENT DAY</span>
+                <span class="progress-pct" id="dayPct">0%</span>
+              </div>
+              <div class="progress-bar-wrap">
+                <div
+                  class="progress-bar green-bar"
+                  id="dayProgress"
+                  style="width: 0%"
+                ></div>
+              </div>
+            </div>
+
+            <div class="progress-label" id="progressLabel">
+              IDLE — AWAITING ORDERS
+            </div>
+          </div>
+        </aside>
+
+        <section class="right-panel">
+          <div class="tab-bar">
+            <button class="tab active" data-tab="live">LIVE FEED</button>
+            <button class="tab" data-tab="sessions">SESSION LOG</button>
+            <button class="tab" data-tab="commits">COMMIT LOG</button>
+            <button class="tab" data-tab="errors">ERROR LOG</button>
+            <div class="tab-count" id="tabCountCommits">0</div>
+          </div>
+
+          <div class="tab-content active" id="tab-live">
+            <div class="feed-header">
+              <span>COMMIT TRANSMISSION FEED</span>
+              <span class="blink-dot"></span>
+            </div>
+            <div class="feed" id="liveFeed">
+              <div class="feed-idle">[ AWAITING COMMIT SEQUENCE... ]</div>
+            </div>
+          </div>
+
+          <div class="tab-content" id="tab-sessions">
+            <div class="feed-header">
+              <span>SESSION HISTORY</span>
+              <button class="wipe-btn" onclick="wipeHistory('sessions')">
+                WIPE
+              </button>
+            </div>
+            <div class="feed" id="sessionsFeed"></div>
+          </div>
+
+          <div class="tab-content" id="tab-commits">
+            <div class="feed-header">
+              <span>COMMIT HISTORY</span>
+              <button class="wipe-btn" onclick="wipeHistory('commits')">
+                WIPE
+              </button>
+            </div>
+            <div class="feed" id="commitsFeed"></div>
+          </div>
+
+          <div class="tab-content" id="tab-errors">
+            <div class="feed-header">
+              <span>ERROR HISTORY</span>
+              <button class="wipe-btn" onclick="wipeHistory('errors')">
+                WIPE
+              </button>
+            </div>
+            <div class="feed" id="errorsFeed"></div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <span>ENGINE: SIMPLE-GIT</span>
+        <span class="divider">|</span>
+        <span>STORAGE: JSONFILE</span>
+        <span class="divider">|</span>
+        <span>SCHEDULER: MOMENT.JS</span>
+        <span class="divider">|</span>
+        <span>PUSH: AUTO ✔</span>
+      </footer>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="script.js"></script>
+    <script>
+      const bootLines = [
+        "GITSYS v1.0.0 INITIALIZING...",
+        "LOADING GIT ENGINE MODULE... OK",
+        "CONNECTING TO LOCAL REPOSITORY... OK",
+        "VERIFYING COMMIT RUNNER... ARMED",
+        "SCANNING DATE RANGE PARSER... OK",
+        "ESTABLISHING SOCKET CONNECTION... OK",
+        "ALL SYSTEMS NOMINAL.",
+        "WELCOME, HAMDHY. READY TO COMMIT.",
+      ];
+      let bi = 0;
+      const bootEl = document.getElementById("bootText");
+      function bootStep() {
+        if (bi < bootLines.length) {
+          bootEl.innerHTML += `<div class="boot-line">> ${bootLines[bi]}</div>`;
+          bi++;
+          setTimeout(bootStep, 220);
+        } else {
+          setTimeout(() => {
+            document.getElementById("bootScreen").style.opacity = "0";
+            setTimeout(() => {
+              document.getElementById("bootScreen").style.display = "none";
+              document.getElementById("dashboard").style.display = "flex";
+              document.getElementById("dashboard").style.animation =
+                "fadeIn 0.4s ease";
+              loadAllHistory();
+            }, 400);
+          }, 500);
+        }
+      }
+      setTimeout(bootStep, 300);
+
+      function tick() {
+        document.getElementById("clock").textContent =
+          new Date().toLocaleTimeString("en-GB", { hour12: false }) + " UTC";
+      }
+      tick();
+      setInterval(tick, 1000);
+
+      document.querySelectorAll(".tab").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          document
+            .querySelectorAll(".tab")
+            .forEach((t) => t.classList.remove("active"));
+          document
+            .querySelectorAll(".tab-content")
+            .forEach((t) => t.classList.remove("active"));
+          btn.classList.add("active");
+          document
+            .getElementById("tab-" + btn.dataset.tab)
+            .classList.add("active");
+        });
+      });
+
+      document.getElementById("decrease").addEventListener("click", () => {
+        const inp = document.getElementById("commitsPerDay");
+        const val = parseInt(inp.value) || 1;
+        if (val > parseInt(inp.min)) inp.value = val - 1;
+      });
+      document.getElementById("increase").addEventListener("click", () => {
+        const inp = document.getElementById("commitsPerDay");
+        const val = parseInt(inp.value) || 1;
+        if (val < parseInt(inp.max)) inp.value = val + 1;
+      });
+
+      let abortController = null;
+      let isRunning = false;
+
+      document
+        .getElementById("startBtn")
+        .addEventListener("click", async () => {
+          if (isRunning) return;
+
+          const startDate = document.getElementById("startDate").value.trim();
+          const endDate = document.getElementById("endDate").value.trim();
+          const commitsPerDay = parseInt(
+            document.getElementById("commitsPerDay").value,
+            10,
+          );
+          const commitMessage = document
+            .getElementById("commitMessage")
+            .value.trim();
+
+          if (!startDate || !endDate || !commitsPerDay) {
+            addLiveLine("error", "MISSING PARAMETERS — fill in all fields");
+            return;
+          }
+
+          const totalDays =
+            Math.round((new Date(endDate) - new Date(startDate)) / 86400000) +
+            1;
+          const totalCommits = totalDays * commitsPerDay;
+
+          document.getElementById("statTotal").textContent = totalCommits;
+          document.getElementById("statDays").textContent = totalDays;
+          document.getElementById("statDone").textContent = "0";
+          setOverall(0, totalCommits);
+          setDay(0, commitsPerDay);
+
+          isRunning = true;
+          abortController = new AbortController();
+
+          const startBtn = document.getElementById("startBtn");
+          const stopBtn = document.getElementById("stopBtn");
+          startBtn.disabled = true;
+          startBtn.querySelector(".fire-label").textContent = "⟳ EXECUTING...";
+          stopBtn.disabled = false;
+          setStatus("COMMIT SEQUENCE ACTIVE");
+
+          addLiveLine(
+            "info",
+            `INITIATING — ${totalCommits} commits · ${totalDays} days · ${commitsPerDay}/day`,
+          );
+
+          saveHistory("sessions", {
+            startDate,
+            endDate,
+            commitsPerDay,
+            commitMessage,
+            totalCommits,
+            totalDays,
+            time: nowStr(),
+          });
+          renderHistory("sessions");
+
+          let overallDone = 0;
+          let dayDone = 0;
+
+          try {
+            const res = await fetch("/run-commits", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                startDate,
+                endDate,
+                commitsPerDay,
+                commitMessage,
+              }),
+              signal: abortController.signal,
+            });
+
+            if (!res.ok) throw new Error(await res.text());
+
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+
+            while (true) {
+              const { value, done } = await reader.read();
+              if (done) break;
+              if (!value) continue;
+
+              const text = decoder.decode(value);
+              const lines = text.split("\n").filter((l) => l.trim());
+
+              for (const line of lines) {
+                if (line.includes("Processing")) {
+                  dayDone = 0;
+                  setDay(0, commitsPerDay);
+                  addLiveLine("info", line);
+                  setStatus(
+                    "PROCESSING: " + line.replace("Processing", "").trim(),
+                  );
+                  continue;
+                }
+
+                if (line.toLowerCase().includes("done")) {
+                  overallDone++;
+                  dayDone++;
+                  document.getElementById("statDone").textContent = overallDone;
+                  setOverall(overallDone, totalCommits);
+                  setDay(dayDone, commitsPerDay);
+                  addLiveLine("success", `✔ ${line}`);
+                  saveHistory("commits", { msg: line.trim(), time: nowStr() });
+                  renderHistory("commits");
+                  updateTabCount();
+                  continue;
+                }
+
+                if (
+                  line.includes("✅") ||
+                  line.toLowerCase().includes("completed") ||
+                  line.toLowerCase().includes("pushed")
+                ) {
+                  addLiveLine("success", line);
+                  continue;
+                }
+
+                if (
+                  line.toLowerCase().includes("error") ||
+                  line.toLowerCase().includes("fail")
+                ) {
+                  addLiveLine("error", line);
+                  saveHistory("errors", { msg: line.trim(), time: nowStr() });
+                  renderHistory("errors");
+                  continue;
+                }
+
+                if (line.toLowerCase().includes("stopping")) {
+                  addLiveLine("error", line);
+                  continue;
+                }
+
+                addLiveLine("info", line);
+              }
+            }
+
+            addLiveLine(
+              "success",
+              "✔ MISSION COMPLETE — ALL COMMITS PUSHED TO REMOTE",
+            );
+            setStatus("MISSION COMPLETE");
+          } catch (err) {
+            if (err.name === "AbortError") {
+              addLiveLine("error", "■ SEQUENCE ABORTED BY OPERATOR");
+              setStatus("ABORTED");
+              saveHistory("errors", {
+                msg: "ABORTED BY OPERATOR",
+                time: nowStr(),
+              });
+              renderHistory("errors");
+            } else {
+              addLiveLine("error", `FATAL: ${err.message}`);
+              setStatus("SYSTEM ERROR");
+              saveHistory("errors", { msg: err.message, time: nowStr() });
+              renderHistory("errors");
+            }
+          } finally {
+            isRunning = false;
+            startBtn.disabled = false;
+            startBtn.querySelector(".fire-label").textContent =
+              "▶ EXECUTE COMMITS";
+            stopBtn.disabled = true;
+          }
+        });
+
+      document.getElementById("stopBtn").addEventListener("click", () => {
+        if (abortController) abortController.abort();
+      });
+
+      function addLiveLine(type, msg) {
+        const feed = document.getElementById("liveFeed");
+        const idle = feed.querySelector(".feed-idle");
+        if (idle) idle.remove();
+        const line = document.createElement("div");
+        line.className = `feed-line feed-${type}`;
+        line.innerHTML = `<span class="feed-ts">${nowStr()}</span><span class="feed-msg">${msg}</span>`;
+        feed.prepend(line);
+        while (feed.children.length > 300) feed.removeChild(feed.lastChild);
+      }
+
+      function setOverall(done, total) {
+        const pct =
+          total > 0 ? Math.min(100, ((done / total) * 100).toFixed(1)) : 0;
+        document.getElementById("overallProgress").style.width = pct + "%";
+        document.getElementById("overallPct").textContent = pct + "%";
+        document.getElementById("progressLabel").textContent =
+          total > 0
+            ? `${done}/${total} COMMITS EXECUTED (${pct}%)`
+            : "IDLE — AWAITING ORDERS";
+      }
+
+      function setDay(done, total) {
+        const pct =
+          total > 0 ? Math.min(100, ((done / total) * 100).toFixed(1)) : 0;
+        document.getElementById("dayProgress").style.width = pct + "%";
+        document.getElementById("dayPct").textContent =
+          `${pct}% (${done}/${total})`;
+      }
+
+      function saveHistory(type, entry) {
+        const key = `gitsys_${type}`;
+        let arr = JSON.parse(localStorage.getItem(key) || "[]");
+        arr.unshift(entry);
+        if (arr.length > 500) arr = arr.slice(0, 500);
+        localStorage.setItem(key, JSON.stringify(arr));
+      }
+
+      function loadAllHistory() {
+        renderHistory("sessions");
+        renderHistory("commits");
+        renderHistory("errors");
+        updateTabCount();
+        const done = JSON.parse(
+          localStorage.getItem("gitsys_commits") || "[]",
+        ).length;
+        document.getElementById("statDone").textContent = done;
+      }
+
+      function renderHistory(type) {
+        const feedIds = {
+          sessions: "sessionsFeed",
+          commits: "commitsFeed",
+          errors: "errorsFeed",
+        };
+        const feed = document.getElementById(feedIds[type]);
+        if (!feed) return;
+        const arr = JSON.parse(localStorage.getItem(`gitsys_${type}`) || "[]");
+
+        if (arr.length === 0) {
+          feed.innerHTML = `<div class="feed-idle">[ NO ${type.toUpperCase()} HISTORY ]</div>`;
+          return;
+        }
+
+        feed.innerHTML = arr
+          .map((e) => {
+            if (type === "sessions") {
+              return `<div class="feed-line feed-info">
+            <span class="feed-ts">${e.time}</span>
+            <span class="feed-msg">◈ ${e.startDate} → ${e.endDate} · ${e.totalCommits} commits · ${e.commitsPerDay}/day · "${e.commitMessage}"</span>
+          </div>`;
+            }
+            if (type === "commits") {
+              return `<div class="feed-line feed-success">
+            <span class="feed-ts">${e.time}</span>
+            <span class="feed-msg">✔ ${e.msg}</span>
+          </div>`;
+            }
+            if (type === "errors") {
+              return `<div class="feed-line feed-error">
+            <span class="feed-ts">${e.time}</span>
+            <span class="feed-msg">✘ ${e.msg}</span>
+          </div>`;
+            }
+          })
+          .join("");
+      }
+
+      function wipeHistory(type) {
+        if (!confirm(`WIPE ${type.toUpperCase()} HISTORY?`)) return;
+        localStorage.removeItem(`gitsys_${type}`);
+        renderHistory(type);
+        updateTabCount();
+      }
+
+      function updateTabCount() {
+        const commits = JSON.parse(
+          localStorage.getItem("gitsys_commits") || "[]",
+        ).length;
+        document.getElementById("tabCountCommits").textContent = commits;
+      }
+
+      function setStatus(msg) {
+        document.getElementById("sysStatus").textContent = msg;
+      }
+
+      function nowStr() {
+        return new Date().toLocaleTimeString("en-GB", { hour12: false });
+      }
+
+      const socket = io();
+      socket.on("reload", () => location.reload());
+    </script>
   </body>
 </html>
