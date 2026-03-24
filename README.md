@@ -2,6 +2,8 @@
 
 A JARVIS-style GitHub contribution bot with a live dashboard that automates commits on any repository. Features real-time progress, smooth animations, commit customization, and GitHub authentication.
 
+![GITSYS Dashboard](https://raw.githubusercontent.com/mohamedhamdhy/micro-js-graph/main/assets/GITSYS.png)
+
 ---
 
 ## 🚀 Features
